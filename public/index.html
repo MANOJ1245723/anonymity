@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymity</title>
+    <style>
+        body{
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            background-color: #F5F7F8;
+        }
+        .container{
+
+        }
+        #submit{
+            border: none;
+            padding:10px;
+            background-color: aqua;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #input-message{
+            border: none;
+            padding: 10px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+        <div id = "chat">
+            <div class="container">
+                <h1>hello</h1>
+            </div>
+        </div>
+        <input type="text" name="message" id="input-message">
+        <button type="button" id = "submit">Send</button>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        
+        const socket = io("http://localhost:3000");
+        const input = document.getElementById("input-message");
+        let name = '';
+        socket.on('username', (username) => {
+            name = username;
+        });
+        socket.on('message', (data) => {
+            const container = document.createElement("div");
+            const message = document.createElement("p");
+            const user = document.createElement("h1");
+            container.classList.add("yourClassName");
+            user.innerHTML = data.username;
+            message.innerHTML = data.message;
+            container.append(user);
+            container.append(message);
+            document.getElementById("chat").append(container);
+            console.log("Client side message event triggerred", data);
+        });
+        document.getElementById("submit").addEventListener("click",() => {
+            socket.emit('message', {message : input.value, username : name});
+            input.value = '';
+        })
+    </script>
+</body>
+</html>
